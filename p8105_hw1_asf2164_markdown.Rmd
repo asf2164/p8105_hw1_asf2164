@@ -4,6 +4,10 @@ output: html_document
 date: "2022-09-20"
 ---
 
+Homework 1
+
+Abigail Feinberg
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
@@ -11,10 +15,8 @@ library(dplyr)
 # install.packages("palmerpenguins")
 ```
 
-
-
 ## R Markdown
-```{r}
+```{r, results = "hide"}
 data("penguins", package = "palmerpenguins")
 # variables: species, island, bill_length_mm, bill_depth_mm, flipper_lenght_mm, body_mass_mm, body_mass_g, sex, year
 summary(penguins)
@@ -22,34 +24,42 @@ nrow(penguins) # rows = 344
 ncol(penguins) # columns = 8
 
 
-
 library(tidyr)
 drop_na(penguins, flipper_length_mm)
 mean(penguins$flipper_length_mm, na.rm = TRUE) # mean of flipper_length_mm = 200.9152
 
 
-penguin_plot = ggplot(penguins,
-                      aes(x = bill_length_mm, y = flipper_length_mm, color = species)) + geom_point()
+ggplot(penguins, aes(x = bill_length_mm, y = flipper_length_mm, color = species)) + geom_point()
 
-ggsave(
-  "penguin_plot.pdf",
-  plot = penguin_plot,
-  device = NULL,
-  path = NULL,
-  scale = 1,
-  width = NA,
-  height = NA,
-  dpi = 300,
-  limitsize = TRUE,
-  bg = NULL,
-)
+ggsave("penguin_plot.pdf")
+
 
 ```
 
+There are `r nrow(penguins)` entries and `r ncol(penguins)` variables in this dataset. There variables that were measured are: 
 
+* species
+
+* island
+
+* bill_length_mm
+
+* bill_depth_mm 
+
+* flipper_lenght_mm
+
+* body_mass_mm 
+
+* body_mass_g
+
+* sex
+
+* year
+
+The mean flipper length is `r mean(penguins$flipper_length_mm, na.rm= TRUE)`. 
 
 ## Problem 2 
-```{r}
+```{r, results = 'hide'}
 set.seed(3)
 
 problem2plot = tibble(
@@ -74,12 +84,18 @@ problem2plot = tibble(
 
 mean(pull(problem2plot, var = normal_var)) #mean = -0.06713568
 mean(pull(problem2plot, var = logical_var)) #mean = 0.6
-mean(pull(problem2plot, var = char_var)) #mean = N/A, this argument is not numerical or logical
-mean(pull(problem2plot, var = factor_var)) #mean = N/A, this argument is not numerical or logical
+mean(pull(problem2plot, var = char_var)) #mean = N/A, this argument is not numerical or logical so means were not calculated
+mean(pull(problem2plot, var = factor_var)) #mean = N/A, this argument is not numerical or logical so means were not calculated 
 
 as.numeric(problem2plot$normal_var) #[1] -0.96193342 -0.29252572  0.25878822 -1.15213189  0.19578283  0.03012394  0.08541773  1.11661021 -1.21885742 [10]  1.26736872
 as.numeric(problem2plot$logical_var) # [1] 0 0 1 0 1 1 1 1 0 1
 as.numeric(problem2plot$char_var) #[1] NA NA NA NA NA NA NA NA NA NA, gives warning that N/As were introduced by coercion, this variable cannot produce a numeric value as a character variable 
-as.numeric(problem2plot$factor_var) #[1] 3 2 1 1 1 2 2 3 1 3
+as.numeric(problem2plot$factor_var) #[1] 3 2 1 1 1 2 2 3 1 3, factor variables are ordinal. even though these values are understood as numbers by R, you cannot take a mean of these values because they're discrete values 
+
+mean(as.numeric(pull(problem2plot, factor_var))) #mean = 1.9, factor variables are ordinal. even though these values are understood as numbers by R, you cannot take a mean of these values because they're discrete values. this value is meaningless. 
+
 ```
 
+The means that work are for the random standard Normal distribution variable and the logical variable. The means that don't work are the character variable and factor variable. This is because the first 2 variables are numeric variables and the second 2 are character variables. 
+
+For as.numeric, the function produces numeric values for all of the variables except the character variable. This is because all of the variables have an order to them and can be converted into numeric values except for the character variables with any set order. However, just because you can take means for all of the variables except the character variables, you should not because the mean value is only meaningful for the random standard normal distribution variable. All of the other variable produce discrete values, not continuous. 
